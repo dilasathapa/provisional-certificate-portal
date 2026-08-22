@@ -11,9 +11,10 @@ const applicationSchema = new mongoose.Schema(
 
     referenceNumber: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
       index: true,
+      default: null,
     },
 
     applicant: {
@@ -43,13 +44,13 @@ const applicationSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Submitted", "Completed"],
-      default: "Submitted",
+      enum: ["Draft", "Submitted", "Completed"],
+      default: "Draft",
     },
 
     submittedAt: {
       type: Date,
-      default: Date.now,
+      default: null,
     },
 
     acknowledgmentPdfKey: {

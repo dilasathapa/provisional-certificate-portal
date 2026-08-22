@@ -18,7 +18,7 @@ const documentSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["ID_PROOF", "DEGREE_CERTIFICATE"],
+      enum: ["ID_PROOF", "DEGREE_CERTIFICATE", "ACKNOWLEDGMENT",],
       required: true,
     },
 

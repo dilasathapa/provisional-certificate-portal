@@ -2,6 +2,8 @@ const {
   createApplication,
   getUserApplications,
   getApplicationById,
+  submitApplication,
+  getAcknowledgmentDownloadUrl,
 } = require("../services/application.service");
 
 const {
@@ -26,14 +28,68 @@ const create = async (req, res, next) => {
 
     return res.status(201).json({
       success: true,
-      message: "Application created successfully",
+      message: "Application draft created successfully",
       application: {
         id: application._id,
         referenceNumber: application.referenceNumber,
         applicant: application.applicant,
         status: application.status,
         submittedAt: application.submittedAt,
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const submit = async (req, res, next) => {
+  try {
+    const result = await submitApplication({
+      applicationId: req.params.id,
+      userId: req.user._id,
+    });
+
+    const {
+      application,
+      acknowledgment,
+    } = result;
+
+    return res.status(200).json({
+      success: true,
+      message: "Application submitted successfully",
+      application: {
+        id: application._id,
+        referenceNumber:
+          application.referenceNumber,
+        applicant: application.applicant,
+        status: application.status,
+        submittedAt: application.submittedAt,
       },
+      acknowledgment: {
+        documentId: acknowledgment._id,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const downloadAcknowledgment = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const url =
+      await getAcknowledgmentDownloadUrl({
+        applicationId: req.params.id,
+        userId: req.user._id,
+      });
+
+    return res.status(200).json({
+      success: true,
+      url,
+      expiresIn: 300,
     });
   } catch (error) {
     next(error);
@@ -77,4 +133,6 @@ module.exports = {
   create,
   getAll,
   getOne,
+  submit,
+  downloadAcknowledgment,
 };
