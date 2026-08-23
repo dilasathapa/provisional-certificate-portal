@@ -103,7 +103,7 @@ function DocumentsStep({
 
     return (
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+        <label className="mb-2.5 block text-sm font-semibold text-slate-800">
           {label}
         </label>
 
@@ -111,21 +111,38 @@ function DocumentsStep({
           <label
             htmlFor={fieldName}
             className={[
-              "flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition",
+              "group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-9 text-center transition-all duration-200",
               error
-                ? "border-red-300 bg-red-50/30"
-                : "border-slate-300 bg-slate-50 hover:border-emerald-400 hover:bg-emerald-50/30",
+                ? "border-red-300 bg-red-50/40"
+                : "border-slate-300 bg-slate-50/70 hover:border-indigo-400 hover:bg-indigo-50/40",
             ].join(" ")}
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200">
-              <span className="text-lg">↑</span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition-all duration-200 group-hover:scale-105 group-hover:ring-indigo-200">
+              <svg
+                className="h-5 w-5 text-indigo-600"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 16V4m0 0L8 8m4-4 4 4"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"
+                />
+              </svg>
             </div>
 
-            <p className="mt-3 text-sm font-semibold text-slate-700">
+            <p className="mt-4 text-sm font-semibold text-slate-800">
               Click to upload
             </p>
 
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1.5 text-xs text-slate-500">
               {description}
             </p>
 
@@ -140,19 +157,23 @@ function DocumentsStep({
             />
           </label>
         ) : (
-          <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+          <div className="flex items-center justify-between rounded-2xl border border-indigo-200 bg-indigo-50/50 p-4 transition">
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100 text-sm font-bold text-red-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-xs font-bold text-red-600 shadow-sm ring-1 ring-slate-200">
                 PDF
               </div>
 
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-slate-900">
+                <p className="truncate text-sm font-semibold text-slate-900">
                   {file.name}
                 </p>
 
-                <p className="text-xs text-slate-500">
+                <p className="mt-0.5 text-xs text-slate-500">
                   {(file.size / (1024 * 1024)).toFixed(2)} MB
+                  <span className="mx-1.5 text-slate-300">
+                    •
+                  </span>
+                  PDF document
                 </p>
               </div>
             </div>
@@ -160,7 +181,7 @@ function DocumentsStep({
             <button
               type="button"
               onClick={() => removeFile(fieldName)}
-              className="ml-4 shrink-0 text-sm font-medium text-red-600 hover:text-red-700"
+              className="ml-4 shrink-0 rounded-lg px-3 py-2 text-sm font-medium cursor-pointer text-red-600 transition hover:bg-red-50 hover:text-red-700"
             >
               Remove
             </button>
@@ -168,7 +189,7 @@ function DocumentsStep({
         )}
 
         {error && (
-          <p className="mt-2 text-xs text-red-600">
+          <p className="mt-2 text-xs font-medium text-red-600">
             {error}
           </p>
         )}
@@ -178,12 +199,12 @@ function DocumentsStep({
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-slate-900">
+      <div className="mb-7">
+        <h2 className="text-xl font-semibold tracking-tight text-slate-900">
           Upload required documents
         </h2>
 
-        <p className="mt-1 text-sm leading-6 text-slate-500">
+        <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500">
           Upload clear PDF copies of the required documents.
           Each file must be no larger than 5 MB.
         </p>
@@ -203,11 +224,11 @@ function DocumentsStep({
         })}
       </div>
 
-      <div className="mt-8 flex items-center justify-between">
+      <div className="mt-9 flex items-center justify-between border-t border-slate-100 pt-6">
         <button
           type="button"
           onClick={onBack}
-          className="rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold cursor-pointer text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
         >
           ← Back
         </button>
@@ -215,7 +236,7 @@ function DocumentsStep({
         <button
           type="button"
           onClick={handleNext}
-          className="rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+          className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-500/20 cursor-pointer"
         >
           Continue →
         </button>

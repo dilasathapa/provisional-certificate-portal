@@ -8,43 +8,51 @@ function AppLayout({ children }) {
   const isDashboard = location.pathname === "/dashboard";
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F7F9FC]">
       {/* Header */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="border-b border-[#E4E7EC] bg-white">
+        <div className="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Brand */}
           <Link
             to="/dashboard"
             className="flex items-center gap-3"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#173F5F] text-sm font-bold tracking-wide text-white shadow-sm">
               PC
             </div>
 
             <div className="hidden sm:block">
-              <p className="text-sm font-bold text-slate-900">
+              <p className="text-[14px] font-bold tracking-[-0.01em] text-[#172033]">
                 Provisional Certificate
               </p>
 
-              <p className="text-xs text-slate-500">
+              <p className="mt-0.5 text-xs font-medium text-[#667085]">
                 Application Portal
               </p>
             </div>
           </Link>
 
-          <div className="flex items-center gap-4">
+          {/* User section */}
+          <div className="flex items-center gap-3 sm:gap-5">
             <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-slate-900">
+              <p className="max-w-[240px] truncate text-sm font-semibold text-[#172033]">
                 {user?.email}
               </p>
 
-              <p className="text-xs text-slate-500">
+              <p className="mt-0.5 text-xs font-medium text-[#667085]">
                 Applicant
               </p>
             </div>
 
+            {/* User avatar */}
+            <div className="hidden h-9 w-9 items-center justify-center rounded-full bg-[#E6F4F1] text-xs font-bold text-[#206B62] sm:flex">
+              {user?.email?.charAt(0)?.toUpperCase() || "A"}
+            </div>
+
+            {/* Logout */}
             <button
               onClick={logout}
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 cursor-pointer"
+              className="cursor-pointer rounded-lg border border-[#D0D5DD] bg-white px-3.5 py-2 text-sm font-semibold text-[#344054] transition duration-200 hover:border-[#B8C0CC] hover:bg-[#F9FAFB] focus:outline-none focus:ring-2 focus:ring-[#2A9D8F]/20 focus:ring-offset-1"
             >
               Logout
             </button>
@@ -53,7 +61,7 @@ function AppLayout({ children }) {
       </header>
 
       {/* Main */}
-      <main>
+      <main className="w-full">
         {children}
       </main>
     </div>

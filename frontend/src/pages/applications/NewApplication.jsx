@@ -129,81 +129,79 @@ function NewApplication() {
     setSubmitting(true);
 
     try {
-        // Validate personal details again before final submission
-        const valid = await trigger([
+      const valid = await trigger([
         "fullName",
         "dateOfBirth",
         "registrationNumber",
         "address",
-        ]);
+      ]);
 
-        if (!valid) {
+      if (!valid) {
         setCurrentStep(1);
         return;
-        }
+      }
 
-        // Make sure both required documents exist
-        if (
+      if (
         !documents.idProof ||
         !documents.degreeCertificate
-        ) {
+      ) {
         setCurrentStep(2);
         return;
-        }
+      }
 
-        const applicationData = getValues();
+      const applicationData = getValues();
 
-        // 1. Create a draft application
-        const applicationResponse =
+      // 1. Create draft application
+      const applicationResponse =
         await createApplication({
-            fullName: applicationData.fullName,
-            dateOfBirth: applicationData.dateOfBirth,
-            registrationNumber:
+          fullName: applicationData.fullName,
+          dateOfBirth: applicationData.dateOfBirth,
+          registrationNumber:
             applicationData.registrationNumber,
-            address: applicationData.address,
+          address: applicationData.address,
         });
 
-        const applicationId =
+      const applicationId =
         applicationResponse.application.id;
 
-        // 2. Upload ID proof
-        await uploadApplicationDocument({
+      // 2. Upload ID proof
+      await uploadApplicationDocument({
         applicationId,
         file: documents.idProof,
         type: "ID_PROOF",
-        });
+      });
 
-        // 3. Upload degree certificate
-        await uploadApplicationDocument({
+      // 3. Upload degree certificate
+      await uploadApplicationDocument({
         applicationId,
         file: documents.degreeCertificate,
         type: "DEGREE_CERTIFICATE",
-        });
+      });
 
-        // 4. Submit the application
-        const submissionResponse =
+      // 4. Submit application
+      const submissionResponse =
         await submitApplication(applicationId);
 
-        console.log(
+      console.log(
         "Application submitted successfully:",
         submissionResponse
-        );
+      );
 
-        // 5. Navigate to dashboard
-        navigate("/dashboard");
+      // 5. Return to dashboard
+      navigate("/dashboard");
     } catch (error) {
-        console.error(
+      console.error(
         "Application submission failed:",
         error
-        );
+      );
 
-        const message =
+      const message =
         error.response?.data?.message ||
         "Unable to submit your application. Please try again.";
 
-        setSubmitError(message);
+      setSubmitError(message);
     } finally {
-        setSubmitting(false);
+      setSubmitting(false);
     }
   };
 
@@ -211,60 +209,88 @@ function NewApplication() {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="w-full px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+        <div className="mx-auto w-full max-w-4xl">
 
-        <div className="mb-8">
-          <p className="text-sm font-medium text-emerald-600">
-            New Application
-          </p>
+          {/* Page heading */}
+          <div className="mb-8">
+            <div className="mb-4 flex items-center gap-2">
+              <span className="h-1 w-8 rounded-full bg-[#2A9D8F]" />
 
-          <h1 className="mt-1 text-2xl font-bold text-slate-900">
-            Provisional Certificate
-          </h1>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Complete the following steps to submit your
-            application.
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
-
-          <StepIndicator currentStep={currentStep} />
-
-          {submitError && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {submitError}
+              <p className="text-sm font-semibold tracking-wide text-[#206B62]">
+                New Application
+              </p>
             </div>
-          )}
 
-          {currentStep === 1 && (
-            <PersonalDetailsStep
-              register={register}
-              errors={errors}
-              onNext={handlePersonalDetailsNext}
-              maxDate={getToday()}
-            />
-          )}
+            <h1 className="text-2xl font-bold tracking-tight text-[#172033] sm:text-3xl">
+              Provisional Certificate
+            </h1>
 
-          {currentStep === 2 && (
-            <DocumentsStep
-              documents={documents}
-              setDocuments={setDocuments}
-              onNext={handleDocumentsNext}
-              onBack={handleBack}
-            />
-          )}
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#667085] sm:text-base">
+              Complete the following steps to submit your
+              provisional certificate application.
+            </p>
+          </div>
 
-          {currentStep === 3 && (
-            <ReviewStep
-              applicationData={applicationData}
-              documents={documents}
-              onBack={handleBack}
-              onSubmit={handleSubmit}
-              submitting={submitting}
-            />
-          )}
+          {/* Application card */}
+          <div className="overflow-hidden rounded-2xl border border-[#E4E7EC] bg-white shadow-[0_4px_20px_rgba(16,24,40,0.05)]">
+
+            {/* Card top accent */}
+            <div className="h-1 w-full bg-[#173F5F]" />
+
+            <div className="p-5 sm:p-8 lg:p-10">
+
+              {/* Step indicator */}
+              <StepIndicator currentStep={currentStep} />
+
+              {/* Error */}
+              {submitError && (
+                <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium leading-5 text-red-700">
+                  {submitError}
+                </div>
+              )}
+
+              {/* Step content */}
+              <div className="mt-8">
+                {currentStep === 1 && (
+                  <PersonalDetailsStep
+                    register={register}
+                    errors={errors}
+                    onNext={handlePersonalDetailsNext}
+                    maxDate={getToday()}
+                  />
+                )}
+
+                {currentStep === 2 && (
+                  <DocumentsStep
+                    documents={documents}
+                    setDocuments={setDocuments}
+                    onNext={handleDocumentsNext}
+                    onBack={handleBack}
+                  />
+                )}
+
+                {currentStep === 3 && (
+                  <ReviewStep
+                    applicationData={applicationData}
+                    documents={documents}
+                    onBack={handleBack}
+                    onSubmit={handleSubmit}
+                    submitting={submitting}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Supporting information */}
+          <div className="mt-5 flex flex-col gap-2 text-center text-xs text-[#667085] sm:flex-row sm:items-center sm:justify-center sm:gap-3">
+            <span>Secure application process</span>
+
+            <span className="hidden h-1 w-1 rounded-full bg-[#98A2B3] sm:block" />
+
+            <span>Your information is handled securely</span>
+          </div>
         </div>
       </div>
     </AppLayout>
