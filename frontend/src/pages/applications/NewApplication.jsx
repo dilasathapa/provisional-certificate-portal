@@ -11,6 +11,15 @@ import PersonalDetailsStep from "./steps/PersonalDetailsStep";
 import DocumentsStep from "./steps/DocumentsStep";
 import ReviewStep from "./steps/ReviewStep";
 
+import {
+  createApplication,
+  submitApplication,
+} from "../../api/application.api";
+
+import {
+  uploadApplicationDocument,
+} from "../../api/document.api";
+
 const personalDetailsSchema = z.object({
   fullName: z
     .string()
@@ -117,51 +126,85 @@ function NewApplication() {
 
   const handleSubmit = async () => {
     setSubmitError("");
-
-    const valid = await trigger([
-      "fullName",
-      "dateOfBirth",
-      "registrationNumber",
-      "address",
-    ]);
-
-    if (!valid) {
-      setCurrentStep(1);
-      return;
-    }
-
-    if (!documents.idProof || !documents.degreeCertificate) {
-      setCurrentStep(2);
-      return;
-    }
-
-    const applicationData = getValues();
-
-    console.log("Application ready for submission:", {
-      applicationData,
-      documents,
-    });
-
-    /*
-      Backend submission will be added next.
-
-      We will send:
-
-      applicationData
-      +
-      idProof
-      +
-      degreeCertificate
-    */
-
     setSubmitting(true);
 
-    // Temporary simulation
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+        // Validate personal details again before final submission
+        const valid = await trigger([
+        "fullName",
+        "dateOfBirth",
+        "registrationNumber",
+        "address",
+        ]);
 
-      console.log("Ready to connect backend");
-    }, 1000);
+        if (!valid) {
+        setCurrentStep(1);
+        return;
+        }
+
+        // Make sure both required documents exist
+        if (
+        !documents.idProof ||
+        !documents.degreeCertificate
+        ) {
+        setCurrentStep(2);
+        return;
+        }
+
+        const applicationData = getValues();
+
+        // 1. Create a draft application
+        const applicationResponse =
+        await createApplication({
+            fullName: applicationData.fullName,
+            dateOfBirth: applicationData.dateOfBirth,
+            registrationNumber:
+            applicationData.registrationNumber,
+            address: applicationData.address,
+        });
+
+        const applicationId =
+        applicationResponse.application.id;
+
+        // 2. Upload ID proof
+        await uploadApplicationDocument({
+        applicationId,
+        file: documents.idProof,
+        type: "ID_PROOF",
+        });
+
+        // 3. Upload degree certificate
+        await uploadApplicationDocument({
+        applicationId,
+        file: documents.degreeCertificate,
+        type: "DEGREE_CERTIFICATE",
+        });
+
+        // 4. Submit the application
+        const submissionResponse =
+        await submitApplication(applicationId);
+
+        console.log(
+        "Application submitted successfully:",
+        submissionResponse
+        );
+
+        // 5. Navigate to dashboard
+        navigate("/dashboard");
+    } catch (error) {
+        console.error(
+        "Application submission failed:",
+        error
+        );
+
+        const message =
+        error.response?.data?.message ||
+        "Unable to submit your application. Please try again.";
+
+        setSubmitError(message);
+    } finally {
+        setSubmitting(false);
+    }
   };
 
   const applicationData = getValues();

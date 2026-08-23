@@ -5,9 +5,6 @@ const api = axios.create({
     import.meta.env.VITE_API_URL ||
     "http://localhost:5001/api",
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 export default api;
