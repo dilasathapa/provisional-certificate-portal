@@ -10,8 +10,8 @@ function AppLayout({ children }) {
   return (
     <div className="min-h-screen bg-[#F7F9FC]">
       {/* Header */}
-      <header className="border-b border-[#E4E7EC] bg-white">
-        <div className="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className=" sticky top-0 border-b border-[#E4E7EC] bg-white">
+        <div className="mx-auto flex h-18 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 ">
           {/* Brand */}
           <Link
             to="/dashboard"
@@ -35,7 +35,7 @@ function AppLayout({ children }) {
           {/* User section */}
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="hidden text-right sm:block">
-              <p className="max-w-[240px] truncate text-sm font-semibold text-[#172033]">
+              <p className="max-w-60 truncate text-sm font-semibold text-[#172033]">
                 {user?.email}
               </p>
 

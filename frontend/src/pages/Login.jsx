@@ -109,7 +109,7 @@ function Login() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
@@ -118,7 +118,7 @@ function Login() {
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="font-semibold text-emerald-600 hover:text-emerald-700"
+            className="font-semibold text-emerald-600 hover:text-emerald-700 cursor-pointer"
           >
             Create an account
           </Link>
