@@ -17,7 +17,7 @@ router.use(authenticate);
 router.post("/", create);
 router.get("/", getAll);
 router.get("/:id", getOne);
-router.post("/:id/submit", authenticate, submit);
-router.get("/:id/acknowledgment", authenticate, downloadAcknowledgment);
+router.post("/:id/submit", submit);
+router.get("/:id/acknowledgment", downloadAcknowledgment);
 
 module.exports = router;

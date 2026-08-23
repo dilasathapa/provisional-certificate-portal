@@ -48,4 +48,14 @@ const documentSchema = new mongoose.Schema(
   }
 );
 
+documentSchema.index(
+  {
+    applicationId: 1,
+    type: 1,
+  },
+  {
+    unique: true,
+  }
+);
+
 module.exports = mongoose.model("Document", documentSchema);

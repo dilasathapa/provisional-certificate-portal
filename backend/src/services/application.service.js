@@ -1,5 +1,6 @@
 const ApiError = require("../utils/ApiError");
 const Application = require("../models/Application");
+const Document = require("../models/Document");
 
 const {
   generateReferenceNumber,
@@ -59,6 +60,34 @@ const submitApplication = async ({
     throw new ApiError(
       400,
       "Only draft applications can be submitted"
+    );
+  }
+
+  const requiredDocumentTypes = [
+    "ID_PROOF",
+    "DEGREE_CERTIFICATE",
+  ];
+
+  const documents = await Document.find({
+    applicationId: application._id,
+    userId,
+    type: {
+      $in: requiredDocumentTypes,
+    },
+  });
+
+  const uploadedTypes = new Set(
+    documents.map((document) => document.type)
+  );
+
+  const missingDocuments = requiredDocumentTypes.filter(
+    (type) => !uploadedTypes.has(type)
+  );
+
+  if (missingDocuments.length > 0) {
+    throw new ApiError(
+      400,
+      "Both ID Proof and Degree Certificate are required before submission"
     );
   }
 
