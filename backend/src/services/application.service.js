@@ -48,6 +48,7 @@ const getApplicationById = async ({
 const submitApplication = async ({
   applicationId,
   userId,
+  email,
 }) => {
   const application = await Application.findOne({
     _id: applicationId,
@@ -114,6 +115,27 @@ const submitApplication = async ({
 
   await application.save();
 
+  let emailSent = false;
+
+  try {
+    const downloadUrl = await getSignedDownloadUrl({
+      key: acknowledgment.s3Key,
+    });
+
+    await sendApplicationSubmittedEmail({
+      email: req.user.email,
+      application,
+      downloadUrl,
+    });
+
+    emailSent = true;
+  } catch (emailError) {
+    console.error(
+      "Application email failed:",
+      emailError
+    );
+  }
+
   // Generate temporary download URL
   const downloadUrl = await getSignedDownloadUrl({
     key: application.acknowledgmentPdfKey,
@@ -158,6 +180,7 @@ const submitApplication = async ({
   return {
     application,
     acknowledgment,
+    emailSent
   };
 };
 

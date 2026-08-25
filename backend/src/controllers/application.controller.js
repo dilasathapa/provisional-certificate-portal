@@ -47,16 +47,19 @@ const submit = async (req, res, next) => {
     const result = await submitApplication({
       applicationId: req.params.id,
       userId: req.user._id,
+      email: req.user.email,
     });
 
     const {
       application,
       acknowledgment,
+      emailSent,
     } = result;
 
     return res.status(200).json({
       success: true,
       message: "Application submitted successfully",
+      emailSent,
       application: {
         id: application._id,
         referenceNumber:
