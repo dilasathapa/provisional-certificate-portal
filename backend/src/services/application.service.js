@@ -1,4 +1,5 @@
 const ApiError = require("../utils/ApiError");
+
 const Application = require("../models/Application");
 const Document = require("../models/Document");
 
@@ -14,8 +15,11 @@ const {
   getSignedDownloadUrl,
 } = require("./storage.service");
 
-const createApplication = async ({ userId, applicant }) => {
+const {
+  sendApplicationSubmittedEmail,
+} = require("./email.service");
 
+const createApplication = async ({ userId, applicant }) => {
   const application = await Application.create({
     userId,
     applicant,
@@ -24,8 +28,6 @@ const createApplication = async ({ userId, applicant }) => {
 
   return application;
 };
-
-
 
 const getUserApplications = async (userId) => {
   return Application.find({ userId }).sort({
@@ -91,6 +93,7 @@ const submitApplication = async ({
     );
   }
 
+  // Generate reference number
   const referenceNumber = generateReferenceNumber();
 
   application.referenceNumber = referenceNumber;
@@ -99,6 +102,7 @@ const submitApplication = async ({
 
   await application.save();
 
+  // Generate and store acknowledgment PDF
   const acknowledgment =
     await generateAndStoreAcknowledgment({
       application,
@@ -109,6 +113,47 @@ const submitApplication = async ({
     acknowledgment.s3Key;
 
   await application.save();
+
+  // Generate temporary download URL
+  const downloadUrl = await getSignedDownloadUrl({
+    key: application.acknowledgmentPdfKey,
+  });
+
+  // Send confirmation email
+  // Email failure should not affect successful application submission.
+  try {
+    const User = require("../models/User");
+
+    const user = await User.findById(userId);
+
+    if (user?.email) {
+      console.log(
+        "Sending application submission email to:",
+        user.email
+      );
+
+      await sendApplicationSubmittedEmail({
+        email: user.email,
+        application,
+        downloadUrl,
+      });
+
+      console.log(
+        "Application submission email sent successfully"
+      );
+    } else {
+      console.log(
+        "No email found for user:",
+        userId
+      );
+    }
+  } catch (emailError) {
+    console.error(
+      "Failed to send application submission email:"
+    );
+
+    console.error(emailError);
+  }
 
   return {
     application,
@@ -142,8 +187,6 @@ const getAcknowledgmentDownloadUrl = async ({
 
   return url;
 };
-
-
 
 module.exports = {
   createApplication,
