@@ -228,7 +228,7 @@ function ReviewStep({
           type="button"
           onClick={onSubmit}
           disabled={submitting}
-          className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold cursor-pointer text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? (
             <span className="flex items-center gap-2">

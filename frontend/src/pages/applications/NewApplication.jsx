@@ -187,8 +187,14 @@ function NewApplication() {
         submissionResponse
       );
 
+      
+
       // 5. Return to dashboard
-      navigate("/dashboard");
+      navigate("/dashboard", {
+        state: {
+            applicationSubmitted: true,
+        },
+      });
     } catch (error) {
       console.error(
         "Application submission failed:",
