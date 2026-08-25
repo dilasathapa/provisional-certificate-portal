@@ -92,21 +92,37 @@ Provisional Certificate Portal
 
           <div style="padding: 32px 30px;">
 
-            <div style="
-              width: 44px;
-              height: 44px;
-              border-radius: 50%;
-              background: #e6f4f1;
-              color: #206b62;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 22px;
-              font-weight: 700;
-              margin-bottom: 18px;
-            ">
-              ✓
-            </div>
+            <table
+                role="presentation"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="margin-bottom: 18px;"
+                >
+                <tr>
+                    <td
+                    width="44"
+                    height="44"
+                    align="center"
+                    valign="middle"
+                    style="
+                        width: 44px;
+                        height: 44px;
+                        background-color: #e6f4f1;
+                        border-radius: 50%;
+                        color: #206b62;
+                        font-family: Arial, Helvetica, sans-serif;
+                        font-size: 22px;
+                        font-weight: 700;
+                        text-align: center;
+                        vertical-align: middle;
+                        line-height: 44px;
+                    "
+                    >
+                    ✓
+                    </td>
+                </tr>
+                </table>
 
             <h1 style="
               margin: 0;

@@ -193,6 +193,7 @@ function NewApplication() {
       navigate("/dashboard", {
         state: {
             applicationSubmitted: true,
+            emailSent: submissionResponse.emailSent,
         },
       });
     } catch (error) {

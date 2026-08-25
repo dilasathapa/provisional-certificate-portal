@@ -409,12 +409,15 @@ const generateAcknowledgmentPdf = (application) => {
       .font("Helvetica")
       .fontSize(10)
       .text(
-        new Date(
-          application.submittedAt
-        ).toLocaleString("en-IN", {
-          dateStyle: "long",
-          timeStyle: "short",
-        }),
+        new Intl.DateTimeFormat("en-IN", {
+          timeZone: "Asia/Kolkata",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        }).format(new Date(application.submittedAt)),
         margin,
         638
       );
