@@ -2,8 +2,11 @@ const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT) || 465,
-  secure: Number(process.env.EMAIL_PORT) === 465,
+  port: Number(process.env.EMAIL_PORT) || 587,
+
+  // Port 587 uses STARTTLS
+  secure: false,
+
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -16,7 +19,8 @@ const sendApplicationSubmittedEmail = async ({
   downloadUrl,
 }) => {
   const applicantName =
-    application.applicant?.fullName || "Applicant";
+    application.applicant?.fullName ||
+    "Applicant";
 
   await transporter.sendMail({
     from:
@@ -40,7 +44,9 @@ Status:
 ${application.status}
 
 Submitted At:
-${new Date(application.submittedAt).toLocaleString("en-IN")}
+${new Date(
+  application.submittedAt
+).toLocaleString("en-IN")}
 
 Your acknowledgment PDF is now available.
 
@@ -93,36 +99,36 @@ Provisional Certificate Portal
           <div style="padding: 32px 30px;">
 
             <table
-                role="presentation"
-                cellpadding="0"
-                cellspacing="0"
-                border="0"
-                style="margin-bottom: 18px;"
+              role="presentation"
+              cellpadding="0"
+              cellspacing="0"
+              border="0"
+              style="margin-bottom: 18px;"
+            >
+              <tr>
+                <td
+                  width="44"
+                  height="44"
+                  align="center"
+                  valign="middle"
+                  style="
+                    width: 44px;
+                    height: 44px;
+                    background-color: #e6f4f1;
+                    border-radius: 50%;
+                    color: #206b62;
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 22px;
+                    font-weight: 700;
+                    text-align: center;
+                    vertical-align: middle;
+                    line-height: 44px;
+                  "
                 >
-                <tr>
-                    <td
-                    width="44"
-                    height="44"
-                    align="center"
-                    valign="middle"
-                    style="
-                        width: 44px;
-                        height: 44px;
-                        background-color: #e6f4f1;
-                        border-radius: 50%;
-                        color: #206b62;
-                        font-family: Arial, Helvetica, sans-serif;
-                        font-size: 22px;
-                        font-weight: 700;
-                        text-align: center;
-                        vertical-align: middle;
-                        line-height: 44px;
-                    "
-                    >
-                    ✓
-                    </td>
-                </tr>
-                </table>
+                  ✓
+                </td>
+              </tr>
+            </table>
 
             <h1 style="
               margin: 0;
@@ -250,4 +256,3 @@ Provisional Certificate Portal
 module.exports = {
   sendApplicationSubmittedEmail,
 };
-

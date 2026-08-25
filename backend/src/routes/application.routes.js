@@ -5,9 +5,9 @@ const authenticate = require("../middleware/auth.middleware");
 const {
   create,
   getAll,
-  getOne,
+  getById,
   submit,
-  downloadAcknowledgment,
+  getAcknowledgment,
 } = require("../controllers/application.controller");
 
 const router = express.Router();
@@ -15,9 +15,13 @@ const router = express.Router();
 router.use(authenticate);
 
 router.post("/", create);
+
 router.get("/", getAll);
-router.get("/:id", getOne);
+
+router.get("/:id", getById);
+
 router.post("/:id/submit", submit);
-router.get("/:id/acknowledgment", downloadAcknowledgment);
+
+router.get("/:id/acknowledgment", getAcknowledgment);
 
 module.exports = router;

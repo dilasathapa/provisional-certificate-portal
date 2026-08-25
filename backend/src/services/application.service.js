@@ -15,11 +15,10 @@ const {
   getSignedDownloadUrl,
 } = require("./storage.service");
 
-const {
-  sendApplicationSubmittedEmail,
-} = require("./email.service");
-
-const createApplication = async ({ userId, applicant }) => {
+const createApplication = async ({
+  userId,
+  applicant,
+}) => {
   const application = await Application.create({
     userId,
     applicant,
@@ -48,7 +47,6 @@ const getApplicationById = async ({
 const submitApplication = async ({
   applicationId,
   userId,
-  email,
 }) => {
   const application = await Application.findOne({
     _id: applicationId,
@@ -56,7 +54,10 @@ const submitApplication = async ({
   });
 
   if (!application) {
-    throw new ApiError(404, "Application not found");
+    throw new ApiError(
+      404,
+      "Application not found"
+    );
   }
 
   if (application.status !== "Draft") {
@@ -83,9 +84,10 @@ const submitApplication = async ({
     documents.map((document) => document.type)
   );
 
-  const missingDocuments = requiredDocumentTypes.filter(
-    (type) => !uploadedTypes.has(type)
-  );
+  const missingDocuments =
+    requiredDocumentTypes.filter(
+      (type) => !uploadedTypes.has(type)
+    );
 
   if (missingDocuments.length > 0) {
     throw new ApiError(
@@ -94,93 +96,58 @@ const submitApplication = async ({
     );
   }
 
-  // Generate reference number
-  const referenceNumber = generateReferenceNumber();
+  /*
+   * Generate application reference number
+   */
+  const referenceNumber =
+    generateReferenceNumber();
 
-  application.referenceNumber = referenceNumber;
+  application.referenceNumber =
+    referenceNumber;
+
   application.status = "Submitted";
+
   application.submittedAt = new Date();
 
   await application.save();
 
-  // Generate and store acknowledgment PDF
+  console.log(
+    "Application submitted:",
+    application._id.toString()
+  );
+
+  /*
+   * Generate acknowledgment PDF
+   * and upload it to S3
+   */
   const acknowledgment =
     await generateAndStoreAcknowledgment({
       application,
       userId,
     });
 
+  console.log(
+    "Acknowledgment PDF generated and stored:",
+    acknowledgment.s3Key
+  );
+
   application.acknowledgmentPdfKey =
     acknowledgment.s3Key;
 
   await application.save();
 
-  let emailSent = false;
-
-  try {
-    const downloadUrl = await getSignedDownloadUrl({
-      key: acknowledgment.s3Key,
+  /*
+   * Generate temporary signed download URL
+   */
+  const downloadUrl =
+    await getSignedDownloadUrl({
+      key: application.acknowledgmentPdfKey,
     });
-
-    await sendApplicationSubmittedEmail({
-      email: req.user.email,
-      application,
-      downloadUrl,
-    });
-
-    emailSent = true;
-  } catch (emailError) {
-    console.error(
-      "Application email failed:",
-      emailError
-    );
-  }
-
-  // Generate temporary download URL
-  const downloadUrl = await getSignedDownloadUrl({
-    key: application.acknowledgmentPdfKey,
-  });
-
-  // Send confirmation email
-  // Email failure should not affect successful application submission.
-  try {
-    const User = require("../models/User");
-
-    const user = await User.findById(userId);
-
-    if (user?.email) {
-      console.log(
-        "Sending application submission email to:",
-        user.email
-      );
-
-      await sendApplicationSubmittedEmail({
-        email: user.email,
-        application,
-        downloadUrl,
-      });
-
-      console.log(
-        "Application submission email sent successfully"
-      );
-    } else {
-      console.log(
-        "No email found for user:",
-        userId
-      );
-    }
-  } catch (emailError) {
-    console.error(
-      "Failed to send application submission email:"
-    );
-
-    console.error(emailError);
-  }
 
   return {
     application,
     acknowledgment,
-    emailSent
+    downloadUrl,
   };
 };
 
@@ -194,7 +161,10 @@ const getAcknowledgmentDownloadUrl = async ({
   });
 
   if (!application) {
-    throw new ApiError(404, "Application not found");
+    throw new ApiError(
+      404,
+      "Application not found"
+    );
   }
 
   if (!application.acknowledgmentPdfKey) {
@@ -204,9 +174,10 @@ const getAcknowledgmentDownloadUrl = async ({
     );
   }
 
-  const url = await getSignedDownloadUrl({
-    key: application.acknowledgmentPdfKey,
-  });
+  const url =
+    await getSignedDownloadUrl({
+      key: application.acknowledgmentPdfKey,
+    });
 
   return url;
 };

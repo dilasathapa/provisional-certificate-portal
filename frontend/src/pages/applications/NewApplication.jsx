@@ -154,15 +154,17 @@ function NewApplication() {
       // 1. Create draft application
       const applicationResponse =
         await createApplication({
-          fullName: applicationData.fullName,
-          dateOfBirth: applicationData.dateOfBirth,
-          registrationNumber:
-            applicationData.registrationNumber,
-          address: applicationData.address,
+            applicant: {
+            fullName: applicationData.fullName,
+            dateOfBirth: applicationData.dateOfBirth,
+            registrationNumber:
+                applicationData.registrationNumber,
+            address: applicationData.address,
+            },
         });
 
       const applicationId =
-        applicationResponse.application.id;
+        applicationResponse.application._id;
 
       // 2. Upload ID proof
       await uploadApplicationDocument({
@@ -182,10 +184,7 @@ function NewApplication() {
       const submissionResponse =
         await submitApplication(applicationId);
 
-      console.log(
-        "Application submitted successfully:",
-        submissionResponse
-      );
+      
 
       
 
@@ -193,7 +192,6 @@ function NewApplication() {
       navigate("/dashboard", {
         state: {
             applicationSubmitted: true,
-            emailSent: submissionResponse.emailSent,
         },
       });
     } catch (error) {

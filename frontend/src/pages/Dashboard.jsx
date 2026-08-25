@@ -44,7 +44,7 @@ function Dashboard() {
     setToast({
         type: "success",
         message:
-            "Application submitted successfully! A copy of the acknowledgment PDF has been sent to your registered email.",
+        "Application submitted successfully. Your acknowledgment PDF is ready to download.",
     });
 
     // Clear navigation state so refresh doesn't show the toast again
@@ -55,9 +55,12 @@ function Dashboard() {
     if (!date) return "—";
 
     return new Intl.DateTimeFormat("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
     }).format(new Date(date));
   };
 
